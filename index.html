@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui' />
+    <title>Leaflet Tiles NU</title>
+    <script src='http://cdn.leafletjs.com/leaflet/v1.3.1/leaflet.js'></script>
+    <script src="leaflet-side-by-side.js"></script>
+    <link href='http://cdn.leafletjs.com/leaflet/v1.3.1/leaflet.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+
+    <script src="./plugin/Leaflet.Control.Opacity-master/dist/L.Control.Opacity.js"></script>
+    <!-- <link href="./plugin/Leaflet.Control.Opacity-master/dist/L.Control.Opacity.css" rel="stylesheet" /> -->
+
+
+
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #btnInfo {
+            position: absolute;
+            font-size: 14px;
+            padding: 10px 24px;
+            top: 60px;
+            right: 300px;
+            background: white;
+            border: 0.2px solid red;
+            box-shadow: 1px 1px 4px -2px #000;
+            z-index: 1000000;
+            border-radius: 4px;
+        }
+
+        #btnInfo2 {
+            position: absolute;
+            font-size: 14px;
+            padding: 10px 24px;
+            top: 60px;
+            left: 330px;
+            background: white;
+            border: 0.2px solid red;
+            box-shadow: 1px 1px 4px -2px #000;
+            z-index: 1000000;
+            border-radius: 4px;
+        }
+
+        .leaflet-control-layers-label {
+            margin: 0 0 8px 1px;
+            text-align: center;
+            font-size: 14px;
+
+        }
+    </style>
+
+
+</head>
+
+<button id="btnInfo" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#infoModal"
+    onClick="window.location.reload();">
+    Drone Deploy
+</button>
+
+<button id="btnInfo2" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#infoModal"
+    onClick="window.location.reload();">
+    Pix4D
+</button>
+
+
+
+
+<body>
+    <div id='map'></div>
+
+
+
+    <script>
+        // var map = L.map('map').setView([16.743455, 100.182847], 18);
+
+
+        var map = L.map('map').setView([16.7421445596, 100.192492401], 15);
+
+        var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Service Geoserver
+        // var mapnu = L.tileLayer.wms('http://localhost:8080/geoserver/GISTNU/wms?', {
+        //     layers: 'map.nu.final_transparent_mosaic_group1',
+        //     format: 'image/png',
+        //     transparent: true,
+        //     maxZoom: 24
+
+        // }).addTo(map);
+
+        // Overlay layers (TMS)
+        var mapnu1 = L.tileLayer('http://localhost/mapnu_proj2020/output/{z}/{x}/{y}.png', {
+            tms: true,
+            opacity: 10,
+            attribution: "",
+            minZoom: 10,
+            maxZoom: 22
+        }).addTo(map);
+
+
+        // Overlay layers (TMS) เรียกโดยการนำภาพไปไว้ใน httdoc แล้วใช้ localhost เรียกแล้วเปลี่ยนข้างหลังเป็น xyz
+        var mapnu = L.tileLayer(
+            'http://localhost/mapnu_proj2020/outputddp/{z}/{x}/{y}.png', {
+                tms: true,
+                opacity: 10,
+                attribution: "",
+                minZoom: 10,
+                maxZoom: 22
+            }).addTo(map);
+
+        //  // เรียกแบบเดิม ไฟล์นี้ต้องอยู่ในโฟลเดอร์เดียวกับภาพทั้งหมด
+        //  var mapnu = L.tileLayer(
+        //             './{z}/{x}/{y}.png', {
+        //                 tms: true,
+        //                 opacity: 10,
+        //                 attribution: "",
+        //                 minZoom: 10,
+        //                 maxZoom: 22
+        //             }).addTo(map);
+
+
+        // var osmLayer = L.tileLayer(
+        //     'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        //         maxZoom: 24
+        //     }).addTo(map)
+        // 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+
+        // var osmLayer = L.tileLayer(
+        //     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        //         maxZoom: 24
+        //     }).addTo(map)
+
+        L.control.sideBySide(mapnu1, mapnu).addTo(map);
+
+        // var popup = L.popup();
+
+        // function onMapClick(e) {
+        //     popup
+        //         .setLatLng(e.latlng)
+        //         .setContent("You clicked the map at " + e.latlng.toString())
+        //         .openOn(map);
+        // }
+
+        // map.on('click', onMapClick);
+
+        // Note
+        var src =
+            'Powered by <a href="http://www.cgistln.nu.ac.th/web2018/">GISTNU</a>';
+        var title = L.control({
+            position: 'bottomleft'
+        });
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'ctl src');
+            this.update();
+            return this._div;
+        };
+        title.update = function (props) {
+            this._div.innerHTML = src;
+        };
+        title.addTo(map);
+
+
+
+
+        var googlemap = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                maxZoom: 22
+            }),
+            osm = L.tileLayer(
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+
+                    maxZoom: 19
+
+                }),
+            white = L.tileLayer(
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEX///+nxBvIAAAAH0lEQVQYGe3BAQ0AAADCIPunfg43YAAAAAAAAAAA5wIhAAAB9aK9BAAAAABJRU5ErkJggg==', {
+                    maxZoom: 19
+
+                }),
+            toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            });
+
+
+        var baseMaps = {
+            "Google Satellite Maps": googlemap,
+            "Open Street Map": osm,
+            "White Map": white,
+            "Toner Map": toner
+        };
+
+        var overlaymaps = {
+            "Pix4D": mapnu1,
+            "Drone Deploy": mapnu
+        }
+
+        L.control.layers(baseMaps, overlaymaps, {
+
+            // collapsed: false
+        }).addTo(map);
+
+
+        L.control.opacity(
+            overlaymaps, {
+                label: "Layers Opacity",
+                collapsed: false
+            }
+        ).addTo(map);
+    </script>
+
+
+</body>
+
+</html>
